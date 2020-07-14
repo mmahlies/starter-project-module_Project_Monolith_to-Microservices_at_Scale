@@ -1,0 +1,42 @@
+version: "3"
+services:
+ reverseproxy:
+   image: mohamedtalaat/reverseproxy
+   ports:
+     - 8080:8080
+   restart: always
+   depends_on:
+    - backend-user
+    - backend-feed   
+ backend-user:
+  image: mohamedtalaat/udacity-restapi-user
+  volumes:
+   - $HOME/.aws:/root/.aws
+  environment:
+   udagram_username: postgres
+   udagram_password: $POSTGRESS_PASSWORD 
+   udagram_database: udagram
+   udagram_host: database-1.cjqzv1eedxia.eu-central-1.rds.amazonaws.com
+   AWS_REGION: eu-central-1
+   AWS_PROFILE: DEPLOYED
+   AWS_BUCKET: udagram-talaat-dev
+   JWT_SECRET: $JWT_SECRET
+   URL: "http://localhost:8100"
+ backend-feed:
+  image: mohamedtalaat/udacity-restapi-feed
+  volumes:
+   - $HOME/.aws:/root/.aws
+  environment:
+   udagram_username: postgres
+   udagram_password: $POSTGRESS_PASSWORD 
+   udagram_database: udagram
+   udagram_host: database-1.cjqzv1eedxia.eu-central-1.rds.amazonaws.com
+   AWS_REGION: eu-central-1
+   AWS_PROFILE: DEPLOYED
+   AWS_BUCKET: udagram-talaat-dev
+   JWT_SECRET: $JWT_SECRET
+   URL: "http://localhost:8100"
+ frontend:
+  image: mohamedtalaat/udacity-frontend
+  ports:
+   - "8100:80"
